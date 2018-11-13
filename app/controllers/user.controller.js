@@ -75,7 +75,6 @@ exports.addChild = (req, res) => {
                 res.send(err);
             }else{
                 var childList = user.childList;
-                var returnChildList = [];
 
                 if (childList) {
                     User.find({

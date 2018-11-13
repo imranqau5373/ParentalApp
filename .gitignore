@@ -1,0 +1,7 @@
+#GIT IGNORE:
+#
+#Ignores the following files.
+
+node_modules/*
+.vscode/*
+package-lock.json

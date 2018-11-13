@@ -36,8 +36,8 @@ exports.findAll = (req, res) => {
 };
 
 exports.addChild = (req, res) => {
-    var parentId = req.param.parentId;
-    var childId = req.body;
+    var parentId = req.body.parentId;
+    var childId = req.body.childId;
 
     console.log(parentId);
     console.log(childId);
@@ -47,6 +47,9 @@ exports.addChild = (req, res) => {
             res.send(err);
         }else{
             var childList = user.childList;
+            if (!childList) {
+                childList = [];
+            }
             childList.push(childId);
 
             User.findOneAndUpdate({
@@ -66,6 +69,7 @@ exports.addChild = (req, res) => {
 
 
     exports.findChild = (req, res) => {
+
         var parentId = req.body.parentId;
 
         console.log(parentId);

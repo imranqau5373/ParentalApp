@@ -5,7 +5,6 @@ const bodyParser = require('body-parser');
 const app = express();
 
 var server = require('http').createServer(app);  
-var io = require('socket.io')(server);
 
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -34,17 +33,6 @@ require('./app/routes/info.routes.js')(app);
 // define a simple route
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to KidsLock application. Organize and keep track of your childs activity on device."});
-});
-
-io.on('connection', function(client) {  
-    console.log('Client connected...');
-
-    client.on('lock', function(data) {
-        console.log(data);
-
-        io.emit('lock_device', data);
-    });
-    
 });
 
 // listen for requests

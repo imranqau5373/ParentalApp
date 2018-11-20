@@ -10,11 +10,13 @@ module.exports = (app) => {
     app.get('/users', users.findAll);
 
     // Retrieve a single User with deviceId
-    app.post('/userByDevice', users.findOne);
+    app.post('/userByDevice', users.findSingleUser);
 
     app.post('/userByPin', users.findByPin);
 
     app.post('/findChild', users.findChild);
+
+    app.post('/sendNotification', users.sendNotification);
 
     // Update a User with userId
     app.put('/users/:userId', users.update);

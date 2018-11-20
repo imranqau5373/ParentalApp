@@ -1,23 +1,43 @@
 const User = require('../models/user.model.js');
+var FCM = require('fcm-node');
+var serverKey = 'AAAAwYopCu8:APA91bHLzFkF-xE4Ju3Nqq1I5oz1_qhWn50zX-YECaCYawf1zrT1t1O9VrPXnYkcmjjYpMjvw-3O8qINQj8i27YjNkNsYmh8FzaHX4PCqaNwbNhNlXpmD8ZkzMjPf0r9whJDPB3DjBCy';
 
 // Create and Save a new user
 exports.create = (req, res) => {
 
     var userTask = new User(req.body);
-    User.update({
-        deviceId: req.body.deviceId
-    }, userTask, {
-        upsert: true,
-        setDefaultsOnInsert: true
-    }, function(err, users) {
-        if (err) return res.send(500, {
-            error: err,
-            pin: req.body.pin
-        });
-            return res.json({
-                message: 'User successfully saved'
+    User.findOne({deviceId: req.body.deviceId}, function(err, user) {
+        if (user){
+            
+            var myquery = { deviceId: req.body.deviceId };
+            var newvalues = { $set: {fcmToken: req.body.fcmToken } };
+            User.updateOne(myquery, newvalues, function(err, saveRes) {
+                if (err) res.status(500).send({
+                    message: err.message || "Some error occurred while updating users."
+                });
+
+                res.json({
+                    message: 'User successfully updated'
+                });
             });
-        });
+            
+
+        }else{
+
+            userTask.save()
+            .then(data => {
+                res.json({
+                    message: 'User successfully saved'
+                });
+            }).catch(err => {
+                return res.send(500, {
+                    error: err,
+                    pin: req.body.pin
+                });
+            });
+        }
+        
+    });
 
 };
 
@@ -29,7 +49,7 @@ exports.findAll = (req, res) => {
         res.send(users);
     }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while retrieving notes."
+            message: err.message || "Some error occurred while retrieving users."
         });
     });
 
@@ -65,6 +85,33 @@ exports.addChild = (req, res) => {
         }
         
     });
+};
+
+exports.sendNotification = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var child = req.body.childId;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            parentId: req.body.parentId,
+            childId: child,
+            locked: req.body.locked
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.send(response);
+        }
+    });
+
+            
 };
 
 
@@ -105,7 +152,7 @@ exports.addChild = (req, res) => {
 // };
 
 // Find a single user with a userId
-exports.findOne = (req, res) => {
+exports.findSingleUser = (req, res) => {
     User.findOne({deviceId: req.body.deviceId}, function(err, user) {
         if (err) res.send(err);
         res.json(user);

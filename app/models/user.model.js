@@ -5,6 +5,7 @@ const UserSchema = mongoose.Schema({
     deviceId: String,
     locked: Boolean,
     pin: String,
+    fcmToken: String,
     childList: Array
 }, {
     timestamps: true

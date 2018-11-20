@@ -108,7 +108,7 @@ exports.sendNotification = function(req, res) {
             res.send(err);
         } else {
             res.json({
-                message: 'User successfully saved'
+                message: 'Notification Sent Successfully!'
             });
         }
     });

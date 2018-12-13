@@ -97,7 +97,8 @@ exports.sendNotification = function(req, res) {
         data: {
             parentId: req.body.parentId,
             childId: child,
-            locked: req.body.locked
+            locked: req.body.locked,
+            isAppUsage: false
         }
     };
 
@@ -112,8 +113,62 @@ exports.sendNotification = function(req, res) {
             });
         }
     });
+};
 
-            
+
+exports.requestChildAppUsage = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var child = req.body.childId;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            parentId: req.body.parentId,
+            childId: child,
+            locked: false,
+            isAppUsage: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+
+exports.sendChildAppUsage = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var appUsage = req.body.appUsage;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            appUsage : appUsage,
+            isChildAppUsage: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
 };
 
 

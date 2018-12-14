@@ -172,6 +172,31 @@ exports.sendChildAppUsage = function(req, res) {
 };
 
 
+exports.blockDeviceNetwork = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            isBlockChildDeviceNetwork: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+
     exports.findChild = (req, res) => {
 
         var parentId = req.body.parentId;

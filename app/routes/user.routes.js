@@ -24,6 +24,9 @@ module.exports = (app) => {
     // Child to Parent notification for app usage
     app.post('/sendChildAppUsage', users.sendChildAppUsage);
 
+    // Block child device network
+    app.post('/blockDeviceNetwork', users.blockDeviceNetwork);
+
     // Update a User with userId
     app.put('/users/:userId', users.update);
 

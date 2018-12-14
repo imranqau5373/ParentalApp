@@ -10,7 +10,7 @@ exports.create = (req, res) => {
         if (user){
             
             var myquery = { deviceId: req.body.deviceId };
-            var newvalues = { $set: {fcmToken: req.body.fcmToken } };
+            var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin } };
             User.updateOne(myquery, newvalues, function(err, saveRes) {
                 if (err) res.status(500).send({
                     message: err.message || "Some error occurred while updating users."

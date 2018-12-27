@@ -344,3 +344,8 @@ exports.update = (req, res) => {
 exports.delete = (req, res) => {
 
 };
+
+exports.test = (req, res) => {
+    res.json('Api is working now.');
+
+};

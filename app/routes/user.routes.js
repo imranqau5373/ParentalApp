@@ -6,6 +6,9 @@ module.exports = (app) => {
 
     app.post('/addChild', users.addChild);
 
+    app.post('/addNewChild', users.addNewChild);
+
+
     // Retrieve all User
     app.get('/users', users.findAll);
 

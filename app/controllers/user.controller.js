@@ -4,11 +4,12 @@ var serverKey = 'AAAAwYopCu8:APA91bHLzFkF-xE4Ju3Nqq1I5oz1_qhWn50zX-YECaCYawf1zrT
 
 // Create and Save a new user
 exports.create = (req, res) => {
-
+    
     var userTask = new User(req.body);
+    console.log(userTask);
     User.findOne({deviceId: req.body.deviceId}, function(err, user) {
         if (user){
-            
+            //on update cannot update the email and password.
             var myquery = { deviceId: req.body.deviceId };
             var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin } };
             User.updateOne(myquery, newvalues, function(err, saveRes) {
@@ -23,16 +24,21 @@ exports.create = (req, res) => {
             
 
         }else{
-
-            userTask.save()
-            .then(data => {
+            User.findOne({email: req.body.email}, function(err, userEmail) {
+                if(userEmail)
                 res.json({
-                    message: 'User successfully saved'
+                    message: 'Email Already Exist'
                 });
-            }).catch(err => {
-                return res.send(500, {
-                    error: err,
-                    pin: req.body.pin
+                userTask.save()
+                .then(data => {
+                    res.json({
+                        message: 'User successfully saved'
+                    });
+                }).catch(err => {
+                    return res.send(500, {
+                        error: err,
+                        pin: req.body.pin
+                    });
                 });
             });
         }
@@ -85,6 +91,84 @@ exports.addChild = (req, res) => {
         }
         
     });
+};
+
+exports.addNewChild = (req, res) => {
+    var childEmail = req.body.email;
+    var childPin = req.body.pin;
+    var parentId = req.body.deviceId;
+    // first need to check that parent device exist or not. if exist then add the child.
+console.log('In add new child',req.body);
+var query = User.findOne({ deviceId: parentId });
+query.exec(function (err, parentUser) {
+    if (err || parentUser == null) {
+      res.json({
+        message: 'That parent user does not exist.'
+      });
+    } else {
+ 
+        var childQuery = User.findOne( {$and:[{ email: childEmail},{pin : childPin}]});
+        childQuery.exec(function (err, childUser) {
+            if (err)
+              res.send(err);
+              else{
+                let childId = childUser.deviceId;
+                parentUser.childList.push(childId);
+                User.findOneAndUpdate({
+                    deviceId: parentId
+                  }, parentUser, {new: true}, 
+                    function(err, user) {
+                    if (err){
+                      res.send(err);
+                    }else{
+                      res.json(user);
+                    }
+                  });
+              }
+          });
+
+    }
+});
+
+};
+
+
+exports.addParent = (req, res) => {
+    var parentEmail = req.body.email;
+    var parentPin = req.body.pin;
+    var childDeviceId = req.body.deviceId;
+    // first need to check that child device exist or not. if exist then add the parent.
+    var query = User.findOne({ deviceId: parentId });
+    query.exec(function (err, childUser) {
+        if (err || childUser == null) {
+        res.json({
+            message: 'That child user does not exist.'
+        });
+        } else {
+    
+            var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
+            parentQuery.exec(function (err, parentUser) {
+                if (err)
+                res.send(err);
+                else{
+                    let childId = childUser.deviceId;
+                    parentUser.childList.push(childId);
+                    User.findOneAndUpdate({
+                        deviceId: parentId
+                    }, parentUser, {new: true}, 
+                        function(err, user) {
+                        if (err){
+                        res.send(err);
+                        }else{
+                        res.json(user);
+                        }
+                    });
+                }
+            });
+
+        }
+    });
+
 };
 
 exports.sendNotification = function(req, res) {

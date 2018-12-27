@@ -6,6 +6,8 @@ const UserSchema = mongoose.Schema({
     locked: Boolean,
     pin: String,
     fcmToken: String,
+    email : String,
+    password : String,
     childList: Array
 }, {
     timestamps: true

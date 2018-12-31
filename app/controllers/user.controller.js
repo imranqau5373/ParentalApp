@@ -308,5 +308,4 @@ exports.delete = (req, res) => {
 
 exports.test = (req, res) => {
     res.json('Api is working now latest child');
-
-};
+ };

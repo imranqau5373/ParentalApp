@@ -1,3 +1,4 @@
+ 
 module.exports = (app) => {
     const users = require('../controllers/user.controller.js');
 
@@ -37,4 +38,4 @@ module.exports = (app) => {
 
     // Delete a User with userId
     app.delete('/users/:userId', users.delete);
-}
+ 

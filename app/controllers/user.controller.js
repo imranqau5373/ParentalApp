@@ -4,13 +4,14 @@ var serverKey = 'AAAAwYopCu8:APA91bHLzFkF-xE4Ju3Nqq1I5oz1_qhWn50zX-YECaCYawf1zrT
 
 // Create and Save a new user
 exports.create = (req, res) => {
-
+    
     var userTask = new User(req.body);
+    console.log(userTask);
     User.findOne({deviceId: req.body.deviceId}, function(err, user) {
         if (user){
-            
+            //on update cannot update the email and password.
             var myquery = { deviceId: req.body.deviceId };
-            var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin } };
+            var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin,email:req.body.email,password:req.body.password } };
             User.updateOne(myquery, newvalues, function(err, saveRes) {
                 if (err) res.status(500).send({
                     message: err.message || "Some error occurred while updating users."
@@ -23,16 +24,21 @@ exports.create = (req, res) => {
             
 
         }else{
-
-            userTask.save()
-            .then(data => {
+            User.findOne({email: req.body.email}, function(err, userEmail) {
+                if(userEmail)
                 res.json({
-                    message: 'User successfully saved'
+                    message: 'Email Already Exist'
                 });
-            }).catch(err => {
-                return res.send(500, {
-                    error: err,
-                    pin: req.body.pin
+                userTask.save()
+                .then(data => {
+                    res.json({
+                        message: 'User successfully saved'
+                    });
+                }).catch(err => {
+                    return res.send(500, {
+                        error: err,
+                        pin: req.body.pin
+                    });
                 });
             });
         }
@@ -84,6 +90,45 @@ exports.addChild = (req, res) => {
               });
         }
         
+    });
+};
+
+exports.addNewChild = (req, res) => {
+    var parentEmail = req.body.email;
+    var parentPin = req.body.pin;
+    var childDevice = req.body.childDeviceId;
+    // first need to check that parent device exist or not. if exist then add the child.
+var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
+parentQuery.exec(function (err, parentUser) {
+    if (err || parentUser == null) {
+      res.json({
+        message: 'That parent user does not exist.'
+      });
+    }
+    else 
+        {
+        User.findOne({deviceId: childDevice}, function(err, child) {
+            if (err || child == null){
+                res.json({
+                    message: 'That child user does not exist.'
+                  });
+            }else{
+                console.log('child device id is',child);
+                let childId = childDevice;
+                parentUser.childList.push(childId);
+                User.findOneAndUpdate({
+                    deviceId: parentUser.deviceId
+                  }, parentUser, {new: true}, 
+                    function(err, user) {
+                    if (err){
+                      res.send(err);
+                    }else{
+                      res.json(user);
+                    }
+                  });
+            }
+        });
+    }
     });
 };
 
@@ -258,5 +303,10 @@ exports.update = (req, res) => {
 
 // Delete a user with the specified userId in the request
 exports.delete = (req, res) => {
+
+};
+
+exports.test = (req, res) => {
+    res.json('Api is working now latest child');
 
 };

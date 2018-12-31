@@ -6,8 +6,13 @@ module.exports = (app) => {
 
     app.post('/addChild', users.addChild);
 
+    app.post('/addNewChild', users.addNewChild);
+
+
     // Retrieve all User
     app.get('/users', users.findAll);
+
+    app.get('/test', users.test);
 
     // Retrieve a single User with deviceId
     app.post('/userByDevice', users.findSingleUser);

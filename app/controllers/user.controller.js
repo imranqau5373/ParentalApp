@@ -11,7 +11,7 @@ exports.create = (req, res) => {
         if (user){
             //on update cannot update the email and password.
             var myquery = { deviceId: req.body.deviceId };
-            var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin } };
+            var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin,email:req.body.email,password:req.body.password } };
             User.updateOne(myquery, newvalues, function(err, saveRes) {
                 if (err) res.status(500).send({
                     message: err.message || "Some error occurred while updating users."
@@ -94,28 +94,30 @@ exports.addChild = (req, res) => {
 };
 
 exports.addNewChild = (req, res) => {
-    var childEmail = req.body.email;
-    var childPin = req.body.pin;
-    var parentId = req.body.deviceId;
+    var parentEmail = req.body.email;
+    var parentPin = req.body.pin;
+    var childDevice = req.body.childDeviceId;
     // first need to check that parent device exist or not. if exist then add the child.
-console.log('In add new child',req.body);
-var query = User.findOne({ deviceId: parentId });
-query.exec(function (err, parentUser) {
+var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
+parentQuery.exec(function (err, parentUser) {
     if (err || parentUser == null) {
       res.json({
         message: 'That parent user does not exist.'
       });
-    } else {
- 
-        var childQuery = User.findOne( {$and:[{ email: childEmail},{pin : childPin}]});
-        childQuery.exec(function (err, childUser) {
-            if (err)
-              res.send(err);
-              else{
-                let childId = childUser.deviceId;
+    }
+    else 
+        {
+        User.findOne({deviceId: childDevice}, function(err, child) {
+            if (err || child == null){
+                res.json({
+                    message: 'That child user does not exist.'
+                  });
+            }else{
+                console.log('child device id is',child);
+                let childId = childDevice;
                 parentUser.childList.push(childId);
                 User.findOneAndUpdate({
-                    deviceId: parentId
+                    deviceId: parentUser.deviceId
                   }, parentUser, {new: true}, 
                     function(err, user) {
                     if (err){
@@ -124,51 +126,10 @@ query.exec(function (err, parentUser) {
                       res.json(user);
                     }
                   });
-              }
-          });
-
-    }
-});
-
-};
-
-
-exports.addParent = (req, res) => {
-    var parentEmail = req.body.email;
-    var parentPin = req.body.pin;
-    var childDeviceId = req.body.deviceId;
-    // first need to check that child device exist or not. if exist then add the parent.
-    var query = User.findOne({ deviceId: parentId });
-    query.exec(function (err, childUser) {
-        if (err || childUser == null) {
-        res.json({
-            message: 'That child user does not exist.'
+            }
         });
-        } else {
-    
-            var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
-            parentQuery.exec(function (err, parentUser) {
-                if (err)
-                res.send(err);
-                else{
-                    let childId = childUser.deviceId;
-                    parentUser.childList.push(childId);
-                    User.findOneAndUpdate({
-                        deviceId: parentId
-                    }, parentUser, {new: true}, 
-                        function(err, user) {
-                        if (err){
-                        res.send(err);
-                        }else{
-                        res.json(user);
-                        }
-                    });
-                }
-            });
-
-        }
+    }
     });
-
 };
 
 exports.sendNotification = function(req, res) {
@@ -346,6 +307,6 @@ exports.delete = (req, res) => {
 };
 
 exports.test = (req, res) => {
-    res.json('Api is working now.');
+    res.json('Api is working now latest child');
 
 };

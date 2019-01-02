@@ -286,13 +286,13 @@ exports.blockDeviceNetwork = function(req, res) {
 
     fcm.send(message, function(err, response) {
         if (err) {
-            res.write(err);
+            res.send(err);
         } else {
-            console.log(response);
-            res.write( 'Notification Sent Successfully!' );
+            console.log(response)
+            res.send({
+                message: 'Notification Sent Successfully!'
+            });
         }
-
-        res.end();
     });
 };
     exports.findChild = (req, res) => {

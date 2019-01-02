@@ -4,24 +4,37 @@ var serverKey = 'AAAAwYopCu8:APA91bHLzFkF-xE4Ju3Nqq1I5oz1_qhWn50zX-YECaCYawf1zrT
 
 // Create and Save a new user
 exports.create = (req, res) => {
-    
+console.log('change pin is',req.body.changePin)
     var userTask = new User(req.body);
     console.log(userTask);
     User.findOne({deviceId: req.body.deviceId}, function(err, user) {
         if (user){
             //on update cannot update the email and password.
-            var myquery = { deviceId: req.body.deviceId };
-            var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin,email:req.body.email,password:req.body.password } };
-            User.updateOne(myquery, newvalues, function(err, saveRes) {
-                if (err) res.status(500).send({
-                    message: err.message || "Some error occurred while updating users."
-                });
-
-                res.json({
-                    message: 'User successfully updated'
-                });
+            if(user.pin != req.body.pin && req.body.changePin != "1")
+            res.json({
+                message: 'Pin Number not matched with existing pin number.'
             });
+            else{
+                var myquery = { deviceId: req.body.deviceId };
+                if(req.body.pin == null || req.body.pin == ''){
+                    res.json({
+                        message: 'Empty Pin is not allowed.'
+                    });
+                }
+                else{
+                    var newvalues = { $set: {fcmToken: req.body.fcmToken, pin: req.body.pin,email:req.body.email,password:req.body.password } };
+                    User.updateOne(myquery, newvalues, function(err, saveRes) {
+                        if (err) res.status(500).send({
+                            message: err.message || "Some error occurred while updating users."
+                        });
+        
+                        res.json({
+                            message: 'User successfully updated'
+                        });
+                    });
+                }
             
+            }
 
         }else{
             User.findOne({email: req.body.email}, function(err, userEmail) {

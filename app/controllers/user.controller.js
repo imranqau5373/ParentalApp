@@ -288,7 +288,7 @@ exports.blockDeviceNetwork = function(req, res) {
         if (err) {
             res.send(err);
         } else {
-            res.json({
+            res.send({
                 message: 'Notification Sent Successfully!'
             });
         }

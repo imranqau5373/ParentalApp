@@ -289,9 +289,7 @@ exports.blockDeviceNetwork = function(req, res) {
             res.write(err);
         } else {
             console.log(response);
-            res.write({
-                message: 'Notification Sent Successfully!'
-            });
+            res.write( 'Notification Sent Successfully!' );
         }
 
         res.end();

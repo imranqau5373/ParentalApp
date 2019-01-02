@@ -285,7 +285,11 @@ exports.blockDeviceNetwork = function(req, res) {
     console.log(message);
 
     fcm.send(message, function(err, response) {
-        if (err) {
+       
+       
+        try {
+           
+          if (err) {
             res.send(err);
         } else {
             console.log(response)
@@ -293,6 +297,12 @@ exports.blockDeviceNetwork = function(req, res) {
                 message: 'Notification Sent Successfully!'
             });
         }
+          }
+          catch(error) {
+            console.error("Throw some  , wierd err, no action reqq"); 
+          }
+
+
     });
 };
     exports.findChild = (req, res) => {

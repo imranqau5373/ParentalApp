@@ -281,7 +281,7 @@ exports.blockDeviceNetwork = function(req, res) {
         to: fcmToken,
         data: {
             isBlockChildDeviceNetwork: blockAll,
-            blockedApps:blockedApps,
+            blockedApps:JSON.stringify(blockedApps),
             blockApps:blockApps,
         }
     };

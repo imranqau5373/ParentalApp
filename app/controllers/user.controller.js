@@ -235,13 +235,15 @@ exports.blockDeviceNetwork = function(req, res) {
     var blockAll = req.body.blockAll;
     var blockApps = req.body.blockApps;
     var blockedApps=req.body.blockedApps;
-    if(blockedApps===undefined || blockedApps===null)
+    if(blockedApps==undefined || blockedApps==null  || blockedApps=="null" )
     {
         blockedApps=null;
     }
     else
     {
+        console.log(blockedApps)
         blockedApps=JSON.parse(blockedApps)
+
         for(let i=0;i<blockedApps.length;i++)
         {
             console.log("Blocking App "+i+" -> "+blockedApps[i]);
@@ -249,6 +251,8 @@ exports.blockDeviceNetwork = function(req, res) {
     
 
     }
+
+
     if(blockAll===undefined)
     {
         blockAll=true;

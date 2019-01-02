@@ -233,11 +233,53 @@ exports.sendChildAppUsage = function(req, res) {
 exports.blockDeviceNetwork = function(req, res) {
     var fcm = new FCM(serverKey);
     var fcmToken = req.body.fcmToken;
+    var blockAll = req.body.blockAll;
+    var blockApps = req.body.blockApps;
+    var blockedApps=req.body.blockedApps;
+    if(blockedApps===undefined)
+    {
+        blockedApps=null;
+    }
+    else
+    {
+        blockedApps=JSON.parse(blockedApps)
+        for(let i=0;i<blockedApps.length;i++)
+        {
+            console.log("Blocking App "+i+" -> "+blockedApps[i]);
+        }
+    
+
+    }
+    if(blockAll===undefined)
+    {
+        blockAll=true;
+    }
+    else
+    {
+        blockAll=JSON.parse(blockAll);
+    }
+
+
+
+    if(blockApps===undefined)
+    {
+        blockApps=false;
+    }
+    else
+    {
+        blockApps=JSON.parse(blockApps);
+    }
+
+
+
+    console.log("Blocking is -> "+blockAll);
 
     var message = { 
         to: fcmToken,
         data: {
-            isBlockChildDeviceNetwork: true
+            isBlockChildDeviceNetwork: blockAll,
+            blockedApps:blockedApps,
+            blockApps:blockApps,
         }
     };
 

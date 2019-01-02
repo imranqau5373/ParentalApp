@@ -271,7 +271,7 @@ exports.blockDeviceNetwork = function(req, res) {
 
 
 
-    console.log("Blocking is -> "+blockAll);
+    console.log("Blocking is ->  All: "+blockAll+" Slected : "+blockApps);
 
     var message = { 
         to: fcmToken,

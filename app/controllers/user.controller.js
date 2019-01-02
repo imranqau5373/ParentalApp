@@ -235,7 +235,7 @@ exports.blockDeviceNetwork = function(req, res) {
     var blockAll = req.body.blockAll;
     var blockApps = req.body.blockApps;
     var blockedApps=req.body.blockedApps;
-    if(blockedApps===undefined)
+    if(blockedApps===undefined || blockedApps===null)
     {
         blockedApps=null;
     }

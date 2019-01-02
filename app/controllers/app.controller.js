@@ -37,13 +37,13 @@ exports.create = (req, res) => {
 
 exports.findAll = (req, res) => {
 
-    App.find()
+    App.find() 
     .then(apps => {
         res.send(apps);
     }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving apps."
         });
-    });
+    }) ;
 
 };

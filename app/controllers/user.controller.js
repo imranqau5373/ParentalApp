@@ -156,6 +156,7 @@ exports.sendNotification = function(req, res) {
             parentId: req.body.parentId,
             childId: child,
             locked: req.body.locked,
+            blockedApps:req.body.blockedApps,
             isAppUsage: false
         }
     };

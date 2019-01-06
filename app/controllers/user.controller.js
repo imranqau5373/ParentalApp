@@ -384,5 +384,5 @@ exports.deleteOldUsers = (req, res) => {
 };
 
 exports.test = (req, res) => {
-    res.json('Api is working now latest child');
+    res.json('Api is working now latest delete change');
  };

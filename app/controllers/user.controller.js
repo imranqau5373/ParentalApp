@@ -369,15 +369,20 @@ exports.update = (req, res) => {
 
 };
 
-// Delete a user with the specified userId in the request
 exports.delete = (req, res) => {
 
+
+
+};
+
+// Delete a user with the specified userId in the request
+exports.deleteOldUsers = (req, res) => {
+    User.find( {$and: [ {email : ''},{pin : ''}]}).remove(function(err, user){
+        if (err) res.send(err);
+        res.json(user);
+    });
 };
 
 exports.test = (req, res) => {
     res.json('Api is working now latest child');
-
-
-
-
  };

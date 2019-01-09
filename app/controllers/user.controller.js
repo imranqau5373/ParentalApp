@@ -60,6 +60,21 @@ console.log('change pin is',req.body.changePin)
 
 };
 
+exports.updateFcmToken = (req, res) => {
+    var myquery = { deviceId: req.body.deviceId };
+    var newvalues = { $set: {fcmToken: req.body.fcmToken } };
+                    User.updateOne(myquery, newvalues, function(err, saveRes) {
+                        if (err) res.status(500).send({
+                            message: err.message || "Some error occurred while updating users."
+                        });
+        
+                        res.json({
+                            message: 'Fcm token successfully updated'
+                        });
+                    });
+
+};
+
 // Retrieve and return all user from the database.
 exports.findAll = (req, res) => {
 
@@ -203,6 +218,114 @@ exports.requestChildAppUsage = function(req, res) {
     });
 };
 
+exports.requestChildCallLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var child = req.body.childId;
+    var fcmToken = req.body.fcmToken;
+    var isNoti = req.body.isNotification;
+    var mail = req.body.isEmail;
+    var parMail = req.body.parentEmail;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            parentId: req.body.parentId,
+            childId: child,
+            locked: false,
+            isAppUsage: false,
+            isChildCallLog: true,
+            isNotification : isNoti,
+            isEmail : mail,
+            parentEmail : parMail
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+exports.requestChildSmsLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var child = req.body.childId;
+    var fcmToken = req.body.fcmToken;
+    var isNoti = req.body.isNotification;
+    var mail = req.body.isEmail;
+    var parMail = req.body.parentEmail;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            parentId: req.body.parentId,
+            childId: child,
+            locked: false,
+            isAppUsage: false,
+            isChildCallLog: false,
+            isChildSmsLog: true,
+            isNotification : isNoti,
+            isEmail : mail,
+            parentEmail : parMail
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+exports.requestChildLocation = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var child = req.body.childId;
+    var fcmToken = req.body.fcmToken;
+    var isNoti = req.body.isNotification;
+    var mail = req.body.isEmail;
+    var parMail = req.body.parentEmail;
+    var single = req.body.isSingle;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            parentId: req.body.parentId,
+            childId: child,
+            locked: false,
+            isAppUsage: false,
+            isChildCallLog: false,
+            isNotification : isNoti,
+            isEmail : mail,
+            parentEmail : parMail,
+            isChildLocation: true,
+            isSingle : single
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
 
 exports.sendChildAppUsage = function(req, res) {
     var fcm = new FCM(serverKey);
@@ -214,6 +337,84 @@ exports.sendChildAppUsage = function(req, res) {
         data: {
             appUsage : appUsage,
             isChildAppUsage: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+exports.sendChildCallLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var callLogs = req.body.callLogs;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            callLogs : callLogs,
+            isChildCallLogReceived: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+exports.sendChildSmSLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var smsLogs = req.body.smsLogs;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            smsLogs : smsLogs,
+            isChildCallSmsReceived: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+exports.sendChildLocation = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var locationLogs = req.body.location;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            location : locationLogs,
+            isChildLocationReceived: true
         }
     };
 
@@ -317,9 +518,7 @@ exports.blockDeviceNetwork = function(req, res) {
         console.log(parentId);
     
         User.findOne({deviceId: parentId}, function(err, user) {
-            if (err){
-                res.send(err);
-            }else{
+            if (user){
                 var childList = user.childList;
 
                 if (childList) {
@@ -331,6 +530,12 @@ exports.blockDeviceNetwork = function(req, res) {
                           return res.json(user);
                       });   
                 }
+            }else if(err){
+                res.send(err);
+            }else{
+                res.json({
+                    message: 'User not found.'
+                });
             }
             
         });

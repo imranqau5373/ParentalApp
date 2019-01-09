@@ -9,6 +9,7 @@ module.exports = (app) => {
 
     app.post('/addNewChild', users.addNewChild);
 
+    app.post('/updateFcmToken', users.updateFcmToken);
 
     // Retrieve all User
     app.get('/users', users.findAll);
@@ -27,11 +28,24 @@ module.exports = (app) => {
     // Parent to child notification for app usage
     app.post('/requestChildAppUsage', users.requestChildAppUsage);
 
+    app.post('/requestChildSmsLog', users.requestChildSmsLog);
+
+    app.post('/requestChildLocation', users.requestChildLocation);
+
+
     // Child to Parent notification for app usage
     app.post('/sendChildAppUsage', users.sendChildAppUsage);
 
+    app.post('/sendChildCallLog', users.sendChildCallLog);
+
+    app.post('/sendChildSmSLog', users.sendChildSmSLog);
+
+    app.post('/sendChildLocation', users.sendChildLocation);
+
     // Block child device network
     app.post('/blockDeviceNetwork', users.blockDeviceNetwork);
+
+    app.post('/requestChildCallLog', users.requestChildCallLog);
 
     // Update a User with userId
     app.put('/users/:userId', users.update);

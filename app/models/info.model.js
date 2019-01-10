@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 
 const InfoSchema = mongoose.Schema({
-    isProfitAds: Boolean
+    isProfitAds: Boolean,
+    adText: String
 }, {
     timestamps: true
 });

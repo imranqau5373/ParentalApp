@@ -47,12 +47,16 @@ module.exports = (app) => {
 
     app.post('/requestChildCallLog', users.requestChildCallLog);
 
+    app.post('/requestChildData', users.requestChildData);
+
     // Update a User with userId
     app.put('/users/:userId', users.update);
 
     // Delete a User with userId
-    app.delete('/users/:userId', users.delete);
+    app.delete('/users/:childId/:parentId', users.delete);
 
     app.delete('/deleteOldUsers', users.deleteOldUsers);
+
+    app.delete('/deleteAccount/:deviceId', users.deleteAccount);
 
 } 

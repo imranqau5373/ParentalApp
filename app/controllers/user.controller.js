@@ -298,30 +298,75 @@ exports.requestChildLocation = function(req, res) {
     var parMail = req.body.parentEmail;
     var single = req.body.isSingle;
 
-    var message = { 
-        to: fcmToken,
-        data: {
-            parentId: req.body.parentId,
-            childId: child,
-            locked: false,
-            isAppUsage: false,
-            isChildCallLog: false,
-            isNotification : isNoti,
-            isEmail : mail,
-            parentEmail : parMail,
-            isChildLocation: true,
-            isSingle : single
-        }
-    };
+    User.findOne({deviceId: child}, function(err, user) {
+        if (user){
 
-    console.log(message);
+            var message = { 
+                to: fcmToken,
+                data: {
+                    parentId: req.body.parentId,
+                    childId: child,
+                    locked: false,
+                    isAppUsage: false,
+                    isChildCallLog: false,
+                    isNotification : isNoti,
+                    isEmail : mail,
+                    parentEmail : parMail,
+                    isChildLocation: true,
+                    isSingle : single
+                }
+            };
+        
+            console.log(message);
+        
+            fcm.send(message, function(err, response) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.json({
+                        message: 'Notification Sent Successfully!'
+                    });
+                }
+            });
 
-    fcm.send(message, function(err, response) {
-        if (err) {
+        } else if(err){
             res.send(err);
-        } else {
+        }else{
             res.json({
-                message: 'Notification Sent Successfully!'
+                message: 'No user found!'
+            });
+        }
+    });
+};
+
+
+exports.requestChildData = function(req, res) {
+    var fcm = new FCM(serverKey);
+
+    User.findOne({deviceId: req.body.childId}, function(err, user) {
+        if (user){
+
+            var message = { 
+                to: user.fcmToken,
+                data: req.body
+            };
+        
+        
+            fcm.send(message, function(err, response) {
+                if (err) {
+                    res.send(err);
+                } else {
+                    res.json({
+                        message: 'Notification Sent Successfully!'
+                    });
+                }
+            });
+
+        } else if(err){
+            res.send(err);
+        }else{
+            res.json({
+                message: 'No user found!'
             });
         }
     });
@@ -576,7 +621,61 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
 
+    User.findOne({deviceId: req.params.parentId}, function(err, user) {
+        if (user){
+            var childListNew = user.childList;
 
+            if(childListNew){
+                var index = childListNew.indexOf(req.params.childId);
+                if (index > -1) {
+                    childListNew.splice(index, 1);
+                }
+    
+                var newvalues = { $set: {childList: childListNew} };
+                var myquery = { deviceId: req.params.parentId };
+                User.updateOne(myquery, newvalues, function(err, saveRes) {
+                    if (err) res.status(500).send({
+                        message: err.message || "Some error occurred while updating users."
+                    });
+    
+                    res.json({
+                        message: 'User successfully deleted'
+                    });
+                });
+            }else{
+                res.json({
+                    message: 'No child found'
+                });
+            }
+
+        }else if(err){
+            res.send(err);
+        }else{
+            res.json({
+                message: 'User not found.'
+            });
+        }
+    });
+
+    // User.remove({
+    //   deviceId: req.params.deviceId
+    // }, function(err, task) {
+    //   if (err)
+    //     res.send(err);
+    //   res.json({ message: 'Child successfully deleted' });
+    // });
+
+};
+
+exports.deleteAccount = (req, res) => {
+
+    User.remove({
+      deviceId: req.params.deviceId
+    }, function(err, task) {
+      if (err)
+        res.send(err);
+      res.json({ message: 'Account successfully deleted' });
+    });
 
 };
 

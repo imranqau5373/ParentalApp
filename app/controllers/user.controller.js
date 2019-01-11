@@ -532,6 +532,7 @@ exports.sendChildNotifLog = function(req, res) {
     console.log(message);
 
     fcm.send(message, function(err, response) {
+       try{
         if (err) {
             res.send(err);
         } else {
@@ -539,6 +540,10 @@ exports.sendChildNotifLog = function(req, res) {
                 message: 'Notification Sent Successfully!'
             });
         }
+    }catch(err)
+    {
+        console.log(err);
+    }
     });
 };
 

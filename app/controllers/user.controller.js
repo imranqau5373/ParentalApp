@@ -356,7 +356,7 @@ exports.requestChildData = function(req, res) {
                 if (err) {
                     res.send(err);
                 } else {
-                    res.json({
+                    res.send({
                         message: 'Notification Sent Successfully!'
                     });
                 }
@@ -475,6 +475,38 @@ exports.sendChildLocation = function(req, res) {
         }
     });
 };
+
+
+
+exports.sendChildNotifLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var notifLogs = req.body.notifLogs;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            notifLogs : notifLogs,
+            isChildNotifLogReceived: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+
+
+
 
 exports.blockDeviceNetwork = function(req, res) {
     var fcm = new FCM(serverKey);

@@ -289,6 +289,45 @@ exports.requestChildSmsLog = function(req, res) {
     });
 };
 
+
+exports.requestChildNotifLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var child = req.body.childId;
+    var fcmToken = req.body.fcmToken;
+    var isNoti = req.body.isNotification;
+    var mail = req.body.isEmail;
+    var parMail = req.body.parentEmail;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            parentId: req.body.parentId,
+            childId: child,
+            locked: false,
+            isAppUsage: false,
+            isChildCallLog: false,
+            isChildSmsLog: false,
+            isChildNotifLog: true,
+            isNotification : isNoti,
+            isEmail : mail,
+            parentEmail : parMail
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+
 exports.requestChildLocation = function(req, res) {
     var fcm = new FCM(serverKey);
     var child = req.body.childId;
@@ -475,6 +514,35 @@ exports.sendChildLocation = function(req, res) {
         }
     });
 };
+
+
+exports.sendChildNotifLog = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var notifLogs = req.body.notifLogs;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            notifLogs : notifLogs,
+            isChildNotifLogReceived: true
+        }
+    };
+
+    console.log(message);
+
+    fcm.send(message, function(err, response) {
+        if (err) {
+            res.send(err);
+        } else {
+            res.json({
+                message: 'Notification Sent Successfully!'
+            });
+        }
+    });
+};
+
+
 
 exports.blockDeviceNetwork = function(req, res) {
     var fcm = new FCM(serverKey);

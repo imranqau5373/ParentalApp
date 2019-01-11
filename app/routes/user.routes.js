@@ -30,6 +30,8 @@ module.exports = (app) => {
 
     app.post('/requestChildSmsLog', users.requestChildSmsLog);
 
+    app.post('/requestChildNotifLog', users.requestChildNotifLog);
+
     app.post('/requestChildLocation', users.requestChildLocation);
 
 
@@ -37,6 +39,8 @@ module.exports = (app) => {
     app.post('/sendChildAppUsage', users.sendChildAppUsage);
 
     app.post('/sendChildCallLog', users.sendChildCallLog);
+
+    app.post('/sendChildNotifLog', users.sendChildNotifLog);
 
     app.post('/sendChildSmSLog', users.sendChildSmSLog);
 

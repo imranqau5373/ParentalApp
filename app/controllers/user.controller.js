@@ -354,11 +354,9 @@ exports.requestChildData = function(req, res) {
         
             fcm.send(message, function(err, response) {
                 if (err) {
-                    res.write(err);
+                    res.write(JSON.stringify(err));
                 } else {
-                    res.write({
-                        message: 'Notification Sent Successfully!'
-                    });
+                    res.write(JSON.stringify({message:'Notification Sent Successfully!'}));
                 }
 
                 res.end();

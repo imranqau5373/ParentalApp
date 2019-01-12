@@ -352,8 +352,10 @@ exports.requestChildData = function(req, res) {
             };
         
         
+            let cbN=0;
             fcm.send(message, function(err, response) {
                
+                cbN++;
                try{
                 if (err) {
                     res.send(err);
@@ -365,7 +367,7 @@ exports.requestChildData = function(req, res) {
             }
                 catch(err)
                 {
-                    console.log(err)
+                    console.log("FCM Multiple Callbacks, ignoring : cb no "+cbN)
                 }
 
 
@@ -502,7 +504,10 @@ exports.sendChildNotifLog = function(req, res) {
 
     console.log(message);
 
+    let cbN=0
     fcm.send(message, function(err, response) {
+       try{
+           cbN++;
         if (err) {
             res.send(err);
         } else {
@@ -510,6 +515,10 @@ exports.sendChildNotifLog = function(req, res) {
                 message: 'Notification Sent Successfully!'
             });
         }
+    }catch(err)
+    {
+        console.log("FCM Multiple Callbacks, ignoring : cb no "+cbN)
+    }
     });
 };
 

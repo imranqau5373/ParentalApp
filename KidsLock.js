@@ -1,6 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
+const multer = require('multer');
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
+      cb(null, Date.now()+"__"+file.originalname)
+    }
+  })
+   
+var upload = multer({ storage: storage })
+ 
 // create express app
 const app = express();
 
@@ -35,6 +48,19 @@ require('./app/routes/apps.routes.js')(app);
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to KidsLock application. Organize and keep track of your childs activity on device."});
 });
+
+app.use('/public',express.static(path.join(__dirname, 'public')));
+
+app.post('/uploadfile', upload.single('file'), (req, res, next) => {
+    const file = req.file
+    if (!file) {
+      const error = new Error('Please upload a file')
+      error.httpStatusCode = 400
+      return next(error)
+    }
+      res.send(file)
+    
+  })
 
 // listen for requests
 server.listen(6641, () => {

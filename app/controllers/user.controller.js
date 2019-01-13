@@ -524,6 +524,38 @@ exports.sendChildNotifLog = function(req, res) {
 
 
 
+exports.sendChildLocationAlert = function(req, res) {
+    var fcm = new FCM(serverKey);
+    var locationAlert = req.body.locationAlert;
+    var fcmToken = req.body.fcmToken;
+
+    var message = { 
+        to: fcmToken,
+        data: {
+            locationAlert : locationAlert,
+            isChildLocationAlertReceived: true
+        }
+    };
+
+    console.log(message);
+
+    let cbN=0
+    fcm.send(message, function(err, response) {
+        try{
+            cbN++;
+         if (err) {
+             res.send(err);
+         } else {
+             res.json({
+                 message: 'Notification Sent Successfully!'
+             });
+         }
+     }catch(err)
+     {
+         console.log("FCM Multiple Callbacks, ignoring : cb no "+cbN)
+     }
+    });
+};
 
 
 exports.blockDeviceNetwork = function(req, res) {

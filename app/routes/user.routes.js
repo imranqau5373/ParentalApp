@@ -43,6 +43,8 @@ module.exports = (app) => {
     app.post('/sendChildLocation', users.sendChildLocation);
     
     app.post('/sendChildNotifLog', users.sendChildNotifLog);
+    
+    app.post('/sendChildLocationAlert', users.sendChildLocationAlert);
 
     // Block child device network
     app.post('/blockDeviceNetwork', users.blockDeviceNetwork);

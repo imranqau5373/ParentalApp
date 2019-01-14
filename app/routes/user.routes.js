@@ -5,9 +5,10 @@ module.exports = (app) => {
     // Create a new User
     app.post('/users', users.create);
 
-    app.post('/addChild', users.addChild);
+    app.post('/addChild', users.addChild); 
 
     app.post('/addNewChild', users.addNewChild);
+    app.post('/addNewChild2', users.addNewChild2);
 
     app.post('/updateFcmToken', users.updateFcmToken);
 
@@ -45,7 +46,7 @@ module.exports = (app) => {
     app.post('/sendChildNotifLog', users.sendChildNotifLog);
     
     app.post('/sendChildLocationAlert', users.sendChildLocationAlert);
-
+    
     // Block child device network
     app.post('/blockDeviceNetwork', users.blockDeviceNetwork);
 

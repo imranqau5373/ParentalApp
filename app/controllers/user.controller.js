@@ -38,7 +38,7 @@ console.log('change pin is',req.body.changePin)
 
         }else{
             User.findOne({email: req.body.email}, function(err, userEmail) {
-                if(userEmail)
+                if(userEmail && req.body.email!==undefined && req.body.email.length>3)
                 res.json({
                     message: 'Email Already Exist'
                 });
@@ -121,10 +121,50 @@ exports.addChild = (req, res) => {
     });
 };
 
+
+
+exports.addNewChild2 = (req, res) => {
+    var pin = req.body.pin;
+    var childId = req.body.childDeviceId;
+
+    console.log(pin);
+    console.log(childId);
+
+    User.findOne({pin: pin}, function(err, user) {
+        if (err || !user){
+            res.send({message:"Parent with this pin dosen't exists !"});
+        }else{
+            var childList = user.childList;
+            console.log("Childretn was",user.childList);
+            if (!childList) {
+                childList = [];
+            }
+            childList.push(childId);
+            user.childList=childList
+
+            User.findOneAndUpdate({
+                deviceId: user.deviceId
+              }, user, {new: true}, 
+                function(err, user) {
+                if (err){
+                  res.send(err);
+                }else{
+                  res.json(user);
+                }
+              });
+        }
+        
+    });
+};
+
+
+
+
 exports.addNewChild = (req, res) => {
     var parentEmail = req.body.email;
     var parentPin = req.body.pin;
     var childDevice = req.body.childDeviceId;
+    console.log('looking for child ',req.body);
     // first need to check that parent device exist or not. if exist then add the child.
 var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
 parentQuery.exec(function (err, parentUser) {

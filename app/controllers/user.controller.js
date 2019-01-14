@@ -164,10 +164,9 @@ exports.addNewChild = (req, res) => {
     var parentEmail = req.body.email;
     var parentPin = req.body.pin;
     var childDevice = req.body.childDeviceId;
-    console.log('looking for child ',req.body);
-    // first need to check that parent device exist or not. if exist then add the child.
-var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
-parentQuery.exec(function (err, parentUser) {
+        // first need to check that parent device exist or not. if exist then add the child.
+//var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});
+User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]},function (err, parentUser) {
     if (err || parentUser == null) {
       res.json({
         message: 'That parent user does not exist.'
@@ -175,6 +174,7 @@ parentQuery.exec(function (err, parentUser) {
     }
     else 
         {
+           // res.json(parentUser);
         User.findOne({deviceId: childDevice}, function(err, child) {
             if (err || child == null){
                 res.json({

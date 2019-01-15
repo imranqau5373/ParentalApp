@@ -163,6 +163,7 @@ exports.addNewChild2 = (req, res) => {
 exports.addNewChild = (req, res) => {
     var parentEmail = req.body.email;
     var parentPin = req.body.pin;
+    
     var childDevice = req.body.childDeviceId;
         // first need to check that parent device exist or not. if exist then add the child.
 //var parentQuery = User.findOne( {$and:[{ email: parentEmail},{pin : parentPin}]});

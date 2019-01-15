@@ -10,7 +10,7 @@ console.log('change pin is',req.body.changePin)
     User.findOne({deviceId: req.body.deviceId}, function(err, user) {
         if (user){
             //on update cannot update the email and password.
-            if(user.pin != req.body.pin && req.body.changePin != "1")
+            if(user.pin != req.body.pin && req.body.changePin != "1" && user.pin != "-")
             res.json({
                 message: 'Pin Number not matched with existing pin number.'
             });
